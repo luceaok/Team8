@@ -1,0 +1,395 @@
+Create tables SQL statements
+
+CREATE TABLE user (
+    id INT AUTO_INCREMENT,
+    first_name VARCHAR(32) NOT NULL CHECK (first_name <> ''),
+    last_name VARCHAR(32) NOT NULL CHECK (last_name <> ''),
+    full_name VARCHAR(65) GENERATED ALWAYS AS (CONCAT(first_name, ' ', last_name)),
+    email VARCHAR(32) NOT NULL CHECK (email <> ''),
+    password_hash VARCHAR(64) NULL,
+    role ENUM('Admin', 'Manager', 'Employee') NOT NULL,
+    profile_image_name TEXT NULL,
+    is_technical BOOLEAN NOT NULL,
+    registered BOOLEAN NOT NULL DEFAULT FALSE,
+
+    PRIMARY KEY (id),
+    UNIQUE (email)
+) ENGINE=InnoDB;
+
+CREATE TABLE project (
+    id INT AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL CHECK (name <> ''),
+    owner_id INT NOT NULL,
+    lead_id INT NOT NULL,
+    brief TEXT NOT NULL,
+    deadline DATE NOT NULL,
+    resource_hours FLOAT(5) NOT NULL CHECK (resource_hours > 0),
+    is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+
+    PRIMARY KEY (id),
+    UNIQUE (name),
+
+    FOREIGN KEY (owner_id)
+      REFERENCES user(id),
+
+    FOREIGN KEY (lead_id)
+      REFERENCES user(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE task (
+    id INT AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL CHECK (name <> ''),
+    project_id INT NOT NULL,
+    owner_id INT NOT NULL,
+    assigned_user_id INT NOT NULL,
+    description TEXT NOT NULL,
+    start_date DATE NOT NULL,
+    estimated_end_date DATE NOT NULL,
+    resource_hours FLOAT(5) NOT NULL CHECK (resource_hours > 0),
+    hours_spent FLOAT(5) NOT NULL DEFAULT 0 CHECK (hours_spent >= 0),
+    is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+
+    PRIMARY KEY (id),
+
+    FOREIGN KEY (project_id)
+      REFERENCES project(id)
+      ON DELETE CASCADE,
+
+    FOREIGN KEY (owner_id)
+      REFERENCES user(id),
+
+    FOREIGN KEY (assigned_user_id)
+      REFERENCES user(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE project_team_member (
+    user_id INT NOT NULL,
+    project_id INT NOT NULL,
+
+    PRIMARY KEY (user_id, project_id),
+
+    FOREIGN KEY (user_id)
+      REFERENCES user(id)
+      ON DELETE CASCADE,
+
+    FOREIGN KEY (project_id) 
+      REFERENCES project(id)
+      ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE todo (
+    id INT AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL CHECK (name <> ''),
+    user_id INT NOT NULL,
+    description TEXT NULL,
+    due_date DATETIME NOT NULL,
+    priority ENUM('None', 'Low', 'Medium', 'High') NOT NULL DEFAULT 'None',
+    completed BOOLEAN NOT NULL DEFAULT FALSE,
+
+    PRIMARY KEY (id),
+
+    FOREIGN KEY (user_id)
+      REFERENCES user(id)
+      ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE tutorial (
+    id INT AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL CHECK (name <> ''),
+    owner_id INT NOT NULL,
+    cover_image TEXT NOT NULL,
+    last_updated DATETIME NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+    is_technical BOOLEAN NOT NULL,
+
+    PRIMARY KEY (id),
+
+    FOREIGN KEY (owner_id)
+      REFERENCES user(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE step (
+    id INT AUTO_INCREMENT,
+    tutorial_id INT NOT NULL,
+    image_name TEXT,
+    description TEXT NOT NULL CHECK (description <> ''),
+
+    PRIMARY KEY (id),
+
+    FOREIGN KEY (tutorial_id)
+      REFERENCES tutorial(id)
+      ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE user_tutorial_favourite (
+    user_id INT NOT NULL,
+    tutorial_id INT NOT NULL,
+
+    PRIMARY KEY (user_id, tutorial_id),
+
+    FOREIGN KEY (user_id) 
+      REFERENCES user(id),
+
+    FOREIGN KEY (tutorial_id) 
+      REFERENCES tutorial(id)
+      ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE topic (
+    id INT AUTO_INCREMENT,
+    name VARCHAR(25) NOT NULL CHECK (name <> ''),
+
+    PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE forum (
+    id INT AUTO_INCREMENT,
+    title VARCHAR(50) NOT NULL CHECK (title <> ''),
+    author_id INT NOT NULL,
+    topic_id INT NOT NULL,
+    description TEXT NOT NULL CHECK (description <> ''),
+    last_updated DATETIME NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+
+    PRIMARY KEY (id),
+
+    FOREIGN KEY (author_id)
+      REFERENCES user(id),
+
+    FOREIGN KEY (topic_id)
+      REFERENCES topic(id)
+      ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE comment (
+    id INT AUTO_INCREMENT,
+    forum_id INT NOT NULL,
+    owner_id INT NOT NULL,
+    content TEXT NOT NULL CHECK (content <> ''),
+    created DATETIME NOT NULL DEFAULT NOW(),
+
+    PRIMARY KEY (id),
+
+    FOREIGN KEY (forum_id)
+      REFERENCES forum(id)
+      ON DELETE CASCADE,
+
+    FOREIGN KEY (owner_id)
+      REFERENCES user(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE user_forum_favourite (
+    user_id INT NOT NULL,
+    forum_id INT NOT NULL,
+
+    PRIMARY KEY (user_id, forum_id),
+
+    FOREIGN KEY (user_id)
+      REFERENCES user(id)
+      ON DELETE CASCADE,
+
+    FOREIGN KEY (forum_id)
+      REFERENCES forum(id)
+      ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE user_notification_preferences (
+    user_id INT NOT NULL,
+    favourited_tutorials BOOLEAN NOT NULL DEFAULT TRUE,
+    favourited_forum_posts BOOLEAN NOT NULL DEFAULT TRUE,
+    created_forum_posts BOOLEAN NOT NULL DEFAULT TRUE,
+    project_tasks BOOLEAN NOT NULL DEFAULT TRUE,
+
+    PRIMARY KEY (user_id),
+
+    FOREIGN KEY (user_id) 
+      REFERENCES user(id)
+      ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE notification (
+    id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    title TEXT NOT NULL,
+    body TEXT NOT NULL,
+    date_posted DATETIME NOT NULL DEFAULT NOW(),
+    type ENUM('favourited_tutorials', 'favourited_forum_posts', 'created_forum_posts', 'project_tasks') NOT NULL,
+    data_id INT NULL,
+
+    PRIMARY KEY (id),
+
+    FOREIGN KEY (user_id) 
+      REFERENCES user(id)
+      ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE user_invite_code (
+    invite_id VARCHAR(20) NOT NULL,
+    user_id INT NOT NULL,
+    expiry_date DATETIME NOT NULL,
+
+    PRIMARY KEY (invite_id),
+
+    FOREIGN KEY (user_id) 
+      REFERENCES user(id)
+) ENGINE=InnoDB;
+
+CREATE TRIGGER add_new_user_notification_preferences AFTER INSERT ON user
+FOR EACH ROW
+  INSERT INTO user_notification_preferences (user_id) VALUES (NEW.id);
+
+CREATE TRIGGER update_tutorial_last_updated AFTER INSERT ON step
+FOR EACH ROW
+  UPDATE tutorial
+  SET last_updated = NOW()
+  WHERE id = NEW.tutorial_id;
+
+CREATE TRIGGER update_post_last_updated AFTER INSERT ON comment 
+FOR EACH ROW
+  UPDATE forum
+  SET last_updated = NOW()
+  WHERE id = NEW.forum_id;
+
+CREATE PROCEDURE cleanup_old_notifications(p_user_ids TEXT, p_type ENUM('favourited_tutorials', 'favourited_forum_posts', 'created_forum_posts', 'project_tasks'), p_data_id INT)
+  DELETE FROM notification 
+  WHERE FIND_IN_SET(user_id, p_user_ids) > 0
+  AND type = p_type 
+  AND data_id = p_data_id 
+  AND date_posted > NOW() - INTERVAL 2 MINUTE;
+
+DELIMITER //
+
+CREATE TRIGGER add_favourited_tutorial_update_notifications AFTER UPDATE ON tutorial
+FOR EACH ROW
+BEGIN
+  DECLARE updated_tutorial_name VARCHAR(50);
+  DECLARE updating_user_name VARCHAR(65);
+
+  SET @user_ids = (SELECT GROUP_CONCAT(user_id SEPARATOR ',') FROM user_tutorial_favourite WHERE tutorial_id = NEW.id);
+  CALL cleanup_old_notifications(@user_ids, 'favourited_tutorials', NEW.id);
+
+  SELECT name INTO updated_tutorial_name FROM tutorial WHERE id = NEW.id;
+  SELECT full_name INTO updating_user_name FROM user WHERE id = NEW.owner_id;
+
+  INSERT INTO notification (user_id, title, body, type, data_id)
+  SELECT favourite.user_id,
+         'Favourited Tutorial Updated',
+         CONCAT(updating_user_name, ' updated the tutorial "', updated_tutorial_name, '".'),
+         'favourited_tutorials',
+         NEW.id
+  FROM user_tutorial_favourite favourite
+  JOIN user_notification_preferences preferences ON favourite.user_id = preferences.user_id
+  WHERE favourite.tutorial_id = NEW.id AND preferences.favourited_tutorials;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER add_favourited_forum_post_update_notifications AFTER UPDATE ON forum
+FOR EACH ROW
+BEGIN
+  DECLARE updated_post_title VARCHAR(50);
+  DECLARE updating_user_name VARCHAR(65);
+
+  SET @user_ids = (SELECT GROUP_CONCAT(user_id SEPARATOR ',') FROM user_forum_favourite WHERE forum_id = NEW.id);
+  CALL cleanup_old_notifications(@user_ids, 'favourited_forum_posts', NEW.id);
+
+  SELECT title INTO updated_post_title FROM forum WHERE id = NEW.id;
+  SELECT full_name INTO updating_user_name FROM user WHERE id = NEW.author_id;
+
+  INSERT INTO notification (user_id, title, body, type, data_id)
+  SELECT favourite.user_id,
+         'Favourited Forum Post Updated',
+         CONCAT(updating_user_name, ' updated the forum post "', updated_post_title, '".'),
+         'favourited_forum_posts',
+         NEW.id
+  FROM user_forum_favourite favourite
+  JOIN user_notification_preferences preferences ON favourite.user_id = preferences.user_id
+  WHERE favourite.forum_id = NEW.id AND preferences.favourited_forum_posts;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER add_created_forum_post_update_notifications AFTER INSERT ON comment
+FOR EACH ROW
+BEGIN
+  DECLARE post_title VARCHAR(50);
+  DECLARE reply_author_name VARCHAR(65);
+
+  SET @user_ids = (SELECT GROUP_CONCAT(author_id SEPARATOR ',') FROM forum WHERE id = NEW.forum_id);
+  CALL cleanup_old_notifications(@user_ids, 'created_forum_posts', NEW.forum_id);
+
+  SELECT title INTO post_title FROM forum WHERE id = NEW.forum_id;
+  SELECT full_name INTO reply_author_name FROM user WHERE id = NEW.owner_id;
+
+  INSERT INTO notification (user_id, title, body, type, data_id)
+  SELECT forum.author_id,
+         'Your Forum Post Received a Reply',
+         CONCAT(reply_author_name, ' replied to your forum post "', post_title, '".'),
+         'created_forum_posts',
+         NEW.forum_id
+  FROM forum
+  JOIN user_notification_preferences preferences ON forum.author_id = preferences.user_id
+  WHERE forum.id = NEW.id AND preferences.created_forum_posts;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER add_project_tasks_update_notifications AFTER UPDATE ON task
+FOR EACH ROW
+BEGIN
+  DECLARE updating_user_name VARCHAR(65);
+
+  SET @user_ids = (SELECT GROUP_CONCAT(DISTINCT user.id SEPARATOR ',') FROM user
+                  INNER JOIN project ON (user.id = project.owner_id OR user.id = project.lead_id)
+                  WHERE project.id = NEW.project_id AND user.id <> NEW.assigned_user_id);
+  CALL cleanup_old_notifications(@user_ids, 'project_tasks', NEW.id);
+
+  SELECT full_name INTO updating_user_name FROM user WHERE id = NEW.assigned_user_id;
+
+  INSERT INTO notification (user_id, title, body, type, data_id)
+  SELECT DISTINCT user.id, 
+         'A Task in Your Project Was Updated', 
+         CONCAT(updating_user_name, ' updated the task "', NEW.name, '".'), 
+         'project_tasks', 
+         NEW.id
+  FROM user
+  INNER JOIN project ON (user.id = project.owner_id OR user.id = project.lead_id)
+  WHERE project.id = NEW.project_id
+  AND user.id <> NEW.assigned_user_id
+  AND (SELECT project_tasks FROM user_notification_preferences WHERE user_id = user.id);
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER add_new_tasks_update_notifications AFTER INSERT ON task
+FOR EACH ROW
+BEGIN
+  DECLARE updating_user_name VARCHAR(65);
+
+  SET @user_ids = (SELECT GROUP_CONCAT(DISTINCT user.id SEPARATOR ',') FROM user WHERE user.id = NEW.assigned_user_id);
+  CALL cleanup_old_notifications(@user_ids, 'project_tasks', NEW.id);
+
+  SELECT full_name INTO updating_user_name FROM user WHERE id = NEW.owner_id;
+
+  INSERT INTO notification (user_id, title, body, type, data_id)
+  SELECT DISTINCT user.id, 
+         'You Have Been Assigned a New Task', 
+         CONCAT(updating_user_name, ' assigned you the task "', NEW.name, '".'), 
+         'project_tasks', 
+         NEW.id
+  FROM user
+  WHERE user.id = NEW.assigned_user_id
+  AND (SELECT project_tasks FROM user_notification_preferences WHERE user_id = user.id);
+END //
+
+DELIMITER ;
+
+CREATE EVENT delete_expired_invite_codes ON SCHEDULE EVERY 1 DAY
+DO
+  DELETE FROM user_invite_code WHERE expiry_date <= NOW();
