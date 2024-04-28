@@ -1,0 +1,547 @@
+/* main style 
+* {font-family: Arial, Helvetica, sans-serif;}
+/*body {min-width: 320px;}*/
+
+body {
+    background-color: var(--window-background);
+    color: var(--text-color);
+}
+
+h1 {
+    text-align: left;
+    padding: 0.4em;
+    margin: 10px;
+    font-weight: normal;
+    color: var(--text-color);
+    font-size: var(--extra-large-title);
+}
+
+h3 {
+    text-align: left;
+    padding: 0.4em;
+    margin: 10px;
+    font-weight: normal;
+    color: var(--text-color);
+    font-size: var(--large-title);
+}
+
+p {
+    padding: 0.4em;
+    margin: 20px;
+    color: var(--text-color);
+    font-size: var(--body);
+}
+
+header, footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--extra-large-title);
+    color: var(--header-text-color);
+}
+
+h2 {
+    text-align: left;
+    padding: 0.4em;
+    margin: 10px;
+    font-weight: normal;
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-color);
+    font-size: var(--title-1);
+}
+
+ul {
+    list-style-type: none;
+    min-height: 50px;
+}
+
+/* accordian */
+#accordion h3 {
+    padding-left: 30px;
+    font-size: var(--title-1);
+    height: 80px;
+    padding-top: 28px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid var(--separator-color);
+    border-radius: 0%;
+}
+
+.collapse {
+    border: 0px solid var(--separator-color);
+    padding: 0.4em;
+    border-radius: 10px;
+    margin-left: 0px;
+    width: 150px;
+    font-size: var(--caption-2);
+}
+
+.border-top {
+    color: var(--text-color);
+}
+
+/* scroll bar 
+    /* width 
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+    
+    /* track 
+    ::-webkit-scrollbar-track {
+    background: rgb(255,122,0);
+    background: linear-gradient(180deg, rgba(255,122,0,1) 0%, rgba(255,255,255,0) 100%);
+        border-radius: 10px;
+    }
+   
+    /* handle 
+    ::-webkit-scrollbar-thumb {
+        background: #ff7a00; 
+        border-radius: 10px;
+    }
+    
+    /* hover 
+    ::-webkit-scrollbar-thumb:hover {
+        background: #ff7a00; 
+    } */
+
+/* drag and drop */
+#sortable {
+    list-style-type: none;
+    padding: 0.4em;
+    text-align: center;
+}
+
+#sortable li {
+    /* margin: 0 3px 3px 3px; */
+    padding: 0.4em;
+    font-size: var(--body);
+    min-height: 30px;
+}
+
+.card-placeholder {
+    border: 1px dotted var(--placeholder-text-color);
+    margin: 0 1em 1em 0;
+    height: 50px;
+}
+
+.bruh {
+    padding-left: 1.65rem;
+}
+
+/* cards */
+.default {
+    background: var(--accent-color);
+    border: 1px solid var(--separator-color);
+    border-radius: 10px;
+    color: var(--text-color);
+    font-size: var(--caption-1);
+    position: relative;
+    min-width: 150px;
+    cursor: pointer;
+    padding: 0.4em;
+    margin-right: 15px;
+    margin-left: 15px;
+    justify-content: center;
+}
+
+.card-title {
+    padding: 0.5em;
+    margin: 10px;
+    text-align: center;
+    font-size: var(--body);
+}
+
+.card {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 220px;
+    margin-left: auto;
+    margin-right: auto;
+    gap: auto;
+    box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+.card.collapse {
+    height: 800px
+}
+
+.icon {
+    margin-top: 20px;
+    margin-bottom: 0px;
+    margin-left: 80px;
+}
+
+.content {
+    font-size: var(--caption-2);
+}
+
+.container-custom {
+    justify-content: center !important;
+    display: flex !important;
+    /* flex-direction: column; */
+    align-content: center !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+}
+
+/* forms */
+form {
+    padding: 0.4em;
+    margin-left: 10px;
+}
+
+/* sdd some margins for each label */
+form label {
+    margin: 5px 10px 5px 0;
+    font-weight: normal;
+    color: var(--text-color);
+    font-size: var(--caption-1);
+}
+
+/* style the input fields */
+form input {
+    vertical-align: middle;
+    margin: 5px 10px 5px 0;
+    padding: 10px;
+    background-color: var(--window-background);
+    border: 1px var(--separator-color);
+}
+
+/* style the submit button */
+form button {
+    padding: 20px;
+    border: 1px solid var(--separator-color);
+    color: var(--text-color);
+    background-color: var(--secondary-accent-color);
+}
+
+form button:hover {
+    background-color: var(--accent-color);
+}
+
+/*  display the form controls vertically instead of horizontally on screens less than 800px */
+@media (max-width: 600px) {
+    form input {
+        margin: 10px 0;
+    }
+
+    form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+#task_input {
+    border-bottom: 2px solid var(--accent-color);
+    background-color: var(--window-background);
+    width: 250px;
+}
+
+#desc_input {
+    border-bottom: 2px solid var(--accent-color);
+    background-color: var(--window-background);
+    width: 250px;
+}
+
+#date {
+    border-bottom: 2px solid var(--accent-color);
+    background-color: var(--window-background);
+    width: 150px;
+    border-top: 0px;
+}
+
+.form-control {
+    margin: 0px;
+    margin-right: 20px;
+    color: darkgray;
+}
+
+/* table */
+.table1 {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table1 th {
+    border-top: 1px solid var(--separator-color);
+    height: 30px;
+    text-align: left;
+    color: var(--header-text-color);
+    font-weight: normal;
+    padding-left: 10px;
+}
+
+.table1 td {
+    text-align: left;
+    height: 50px;
+}
+
+.table1 tr {
+    border-bottom: 1px solid var(--separator-color);
+}
+
+.table1 tr:hover {
+    background-color: lightgray;
+}
+
+#data {
+    padding-left: 20px;
+}
+
+.icon-table {
+    margin-left: 10px;
+    margin-right: 30px;
+}
+
+.progress-bar {
+    background-color: var(--accent-color)
+}
+
+.progress {
+    margin-top: 20px;
+    margin-right: 20px;
+}
+
+/* buttons */
+.button-x {
+    color: var(--text-color);
+    border: 0;
+    background: 0;
+    position: absolute;
+    cursor: pointer;
+    right: 5%;
+}
+
+.button-add {
+    color: var(--accent-color);
+    font-size: var(--body);
+    cursor: pointer;
+}
+
+.btn-complete {
+    background: var(--secondary-accent-color);
+    border: 1px solid var(--separator-color);
+    border-radius: 10px;
+    margin: 25px;
+    margin-left: 80px;
+    margin-top: 40px;
+    height: 30px;
+    color: var(--text-color);
+    padding-left: 5%;
+    padding-right: 5%;
+    text-align: right;
+}
+
+.btn-complete:active {
+    background: var(--secondary-accent-color);
+    border: 1px solid var(--separator-color);
+    border-radius: 10px;
+    margin: 25px;
+    margin-left: 80px;
+    margin-top: 40px;
+    height: 30px;
+    color: var(--text-color);
+    padding-left: 5%;
+    padding-right: 5%;
+    text-align: right;
+}
+
+.btn-sub {
+    background: var(--secondary-accent-color);
+    border: 1px solid var(--separator-color);
+    border-radius: 10px;
+    margin: 25px;
+    margin-left: 80px;
+    margin-top: 40px;
+    height: 30px;
+    color: var(--text-color);
+    padding-left: 5%;
+    padding-right: 5%;
+}
+
+.btn-sub:hover, .btn-complete:hover {
+    background-color: var(--accent-color);
+}
+
+.btn-sub:disabled {
+    background-color: var(--secondary-accent-color);
+    border: 1px solid var(--separator-color);
+}
+
+.btn-lg {
+    color: var(--accent-color);
+    text-align: center;
+    font-size: 50px;
+    margin-top: -15px;
+}
+
+.btn-lg:hover {
+    color: var(--accent-color);
+}
+
+.dropdown-item:active {
+    background-color: var(--accent-color);
+}
+
+.btn-group-left, .btn-group-right {
+    display: inline-block;
+}
+
+.btn-group-right {
+    padding: 0.4em;
+    margin-right: 30px;
+}
+
+/* containers and display */
+#big-container {
+    display: flex;
+    flex-wrap: wrap;
+    border: 2px solid var(--separator-color);
+    padding: 0.4em;
+    margin: 20px;
+    border-radius: 10px;
+    justify-content: space-between;
+    /* box-shadow: 0 4px 6px var(--shadow-color); */
+}
+
+#small-container {
+    border: 2px solid var(--separator-color);
+    padding: 0.4em;
+    margin: 20px;
+    border-radius: 10px;
+    /* box-shadow: 0 4px 6px var(--shadow-color); */
+    list-style-type: none;
+}
+
+#box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-left: 30px;
+}
+
+.box-table {
+    margin: 20px;
+}
+
+.row {
+    display: block;
+}
+
+.column-2 {
+    flex: 50%
+}
+
+.column-3 {
+    flex: 33.33%;
+    padding-left: 20px;
+}
+
+.date {
+    border-top: 1px solid var(--separator-color);
+    border-left: 1px solid var(--separator-color);
+    border-right: 1px solid var(--separator-color);
+    border-bottom: 2px solid var(--accent-color);
+    background-color: var(--window-background);
+    width: 150px;
+    border-radius: 5px;
+    /* margin-top: 15px; */
+}
+
+#flex-end {
+    background-color: var(--window-background);
+    width: 100%;
+    padding: 10px 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.col-md-3 {
+    max-width: 100%;
+}
+
+.assign {
+    justify-content: center;
+}
+
+.paragraphdrag {
+    text-align: center;
+}
+
+.ui-datepicker {
+    font-size: 16px;
+    background-color: var(--secondary-fill-color);
+    color: var(--text-color);
+    border: 1px solid var(--accent-color);
+}
+
+.ui-datepicker-header {
+    background-color: var(--secondary-fill-color);
+    color: var(--window-background);
+    color: var(--text-color);
+}
+
+.ui-state-default {
+    /* background-color: var(--accent-color); */
+    color: var(--window-background);
+    border: 0px;
+    color: var(--text-color);
+}
+
+.ui-state-active {
+    background-color: var(--accent-color);
+    color: var(--window-background);
+    color: var(--text-color);
+}
+
+.table {
+    font-size: var(--body);
+    border-color: var(--grid-color);
+    background-color: var(--window-background);
+}
+
+.ui-datepicker a {
+    text-decoration: none;
+}
+
+.ui-datepicker-calendar td a {
+    color: var(--text-color) !important;
+}
+
+.ui-datepicker-calendar .ui-state-default {
+    border: none;
+    /* background-color: var(--control-color); */
+    color: var(--label-color);
+}
+
+.ui-datepicker-calendar td a:hover {
+    background-color: var(--secondary-accent-color);
+    color: var(--selected-content-text-color);
+}
+
+.ui-datepicker-calendar .ui-state-active {
+    background-color: var(--accent-color);
+    color: var(--selected-content-text-color);
+}
+
+.ui-datepicker .ui-datepicker-prev span, .ui-datepicker .ui-datepicker-next span {
+    display: block;
+    margin: 0;
+    color: var(--control-text-color);
+}
+
+.ui-datepicker .ui-datepicker-prev:hover, .ui-datepicker .ui-datepicker-next:hover {
+    background-color: var(--secondary-accent-color);
+}
+
+.ui-datepicker .ui-datepicker-prev {
+    float: left;
+    margin-left: 10px;
+}
+
+.ui-datepicker .ui-datepicker-next {
+    float: right;
+    margin-right: 10px;
+}
