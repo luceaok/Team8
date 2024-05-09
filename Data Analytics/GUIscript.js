@@ -21,51 +21,125 @@ $(document).ready(function() {
 
     // Render charts
     renderCharts();
+    getPieData();
+    getNumProjects();
+    getNumTasks();
+    getLinePerformanceData() 
+    
 });
 
-function renderCharts() {
-    // Pie Chart
-    var pieCtx = document.getElementById('pie-chart').getContext('2d');
-    var pieChart = new Chart(pieCtx, {
-        type: 'pie',
-        data: {
-            labels: ['Task 1', 'Task 2', 'Task 3', 'Task 4', 'Task 5', 'Task 6'],
-            datasets: [{
-                label: 'Task Status',
-                data: [10, 5, 15, 30, 20, 20],
-                backgroundColor: ['#d62728 ', '#9467bd ', '#2ca02c', '#1f77b4', '#ff7f0e', '#ffbb00'],
-            }]
-        },
-        options: {
-            title: {
-                display: true,
-                text: 'Task Status'
-            },
-            responsive: false
-        }
-    });
 
-    // Line Chart
-    var lineCtx = document.getElementById('line-chart').getContext('2d');
-    var lineChart = new Chart(lineCtx, {
-        type: 'line',
-        data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-            datasets: [{
-                label: 'Performance',
-                data: [65, 59, 80, 81, 56, 55, 40],
-                borderColor: 'blue',
-                fill: false
-            }]
-        },
-        options: {
-            title: {
-                display: true,
-                text: 'Performance Over Time'
-            },
-            responsive: false
-        }
-    });
+
+var pieChartData;
+var numProjects;
+var numTasks;
+var linePerformanceData;
+
+async function queryIndividualAPI(data_about, q_data, target_id, when = '' ) {
+  try {
+    // Define the URL of the API and parameters
+    
+    const apiUrl = 'http://34.147.182.3/v1.1/data-analytics/individual-analytics';
+    const params = {
+      'access-code': 'BidscJhwio!hooa',
+      'data-about': data_about,
+      'data': q_data,
+      'target-id': target_id,
+      'when': when
+    };
+
+
+    // Construct the query string from parameters
+    const queryString = new URLSearchParams(params).toString();
+    const urlWithParams = `${apiUrl}?${queryString}`;
+    console.log(urlWithParams);
+
+    // Make the GET request
+    const response = await fetch(urlWithParams);
+    
+    // Check if the response is OK
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    
+    // Parse response data
+    const data = await response.json();
+    
+    // Process the data returned by the API
+    console.log("Received data:", data['analytics-data']);
+    return data['analytics-data'];
+
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    throw error; // Re-throw the error to propagate it to the caller
+  }
+}
+
+async function getPieData() {
+  try {
+    const analytics_data = await queryIndividualAPI("self", "task-weight-breakdown", 1);
+    pieChartData = analytics_data;
+    renderPieChart();
+    return pieChartData;
+  } catch (error) {
+    console.error('Error fetching analytics data:', error);
+  }
+}
+
+function renderPieChart(){
+  // Pie Chart
+  var pieCtx = document.getElementById('pie-chart').getContext('2d');
+  var pieChart = new Chart(pieCtx, pieChartData);
+}
+
+async function getNumProjects() {
+  try {
+    const analytics_data = await queryIndividualAPI("self", "num-projects", 1);
+    numProjects = analytics_data;
+    renderNumProjects();
+    return numProjects;
+  } catch (error) {
+    console.error('Error fetching analytics data:', error);
+  }
+}
+
+function renderNumProjects(){
+  document.getElementById('projectsNumber').innerHTML = numProjects;
+}
+
+async function getNumTasks() {
+  try {
+    const analytics_data = await queryIndividualAPI("self", "num-tasks", 1);
+    numTasks = analytics_data;
+    renderNumTasks();
+    return numTasks;
+  } catch (error) {
+    console.error('Error fetching analytics data:', error);
+  }
+}
+
+function renderNumTasks(){
+  document.getElementById('tasksNumber').innerHTML = numTasks;
+}
+
+async function getLinePerformanceData() {
+  try {
+    const analytics_data = await queryIndividualAPI("self", "weekly-task-completion", 1);
+    linePerformanceData = analytics_data;
+    renderLineChart();
+    return linePerformanceData;
+  } catch (error) {
+    console.error('Error fetching analytics data:', error);
+  }
+}
+
+function renderLineChart(){
+      // Line Chart
+      var lineCtx = document.getElementById('line-chart').getContext('2d');
+      var lineChart = new Chart(lineCtx, linePerformanceData);
+}
+function renderCharts() {
+    
 
     // Hide date selection and project selection on page load
     $('#projectsDropdownContainer').addClass('hidden');
