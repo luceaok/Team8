@@ -28,6 +28,7 @@ $(document).ready(function() {
     getProjects();
     getCompanyWeeklyCompletion();
     getTopEmployeesData();
+    getPerformancePercent();
 });
 
 
@@ -399,7 +400,7 @@ function renderPerformancePercent(performancePercent){
     comparison = decreased;
   }
 
-  document.getElementById('performance-percentage').innerHTML = abs(performancePercent); 
+  document.getElementById('performance-percent').innerHTML = (performancePercent**2)**0.5 + "%"; 
   document.getElementById('performance-comparison').innerHTML = comparison;
 }
 
