@@ -26,11 +26,27 @@ $(document).ready(function() {
     getNumTasks();
     getLinePerformanceData();
     getProjects();
-    
+    getCompanyWeeklyCompletion();
+    getTopEmployeesData();
 });
 
 
+function renderCharts() {
+    
 
+  // Hide date selection and project selection on page load
+  $('#projectsDropdownContainer').addClass('hidden');
+  $('#dateSelectionContainer').addClass('hidden');
+
+  // Listen to tab activation event
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      var targetTab = $(e.target).attr("href"); // activated tab
+      if (targetTab === "#compare-view") {
+          $('#projectsDropdownContainer').addClass('hidden');
+          $('#dateSelectionContainer').addClass('hidden');
+      }
+  });
+}
 
 
 
@@ -271,139 +287,126 @@ function renderProjectStatusChart(){
 // ---------- END OF PROJECTS VIEW -------
 
 
-function renderCharts() {
+
+
+
+
+
+
+// ---------- COMPANY VIEW ----------------
+// Sample data for task weight completion by week
+var companyWeeklyCompletion;
+var companyTopEmployees;
+var performancePercent;
+
+async function queryCompanyAPI(q_data) {
+  try {
+    // Define the URL of the API and parameters
     
+    const apiUrl = 'http://34.147.182.3/v1.1/data-analytics/company-analytics';
+    const params = {
+      'access-code': 'EijfgjqbUEft.!o',
+      'data': q_data
+    };
 
-    // Hide date selection and project selection on page load
-    $('#projectsDropdownContainer').addClass('hidden');
-    $('#dateSelectionContainer').addClass('hidden');
+    // Construct the query string from parameters
+    const queryString = new URLSearchParams(params).toString();
+    const urlWithParams = `${apiUrl}?${queryString}`;
+    console.log(urlWithParams);
 
-    // Listen to tab activation event
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        var targetTab = $(e.target).attr("href"); // activated tab
-        if (targetTab === "#compare-view") {
-            $('#projectsDropdownContainer').addClass('hidden');
-            $('#dateSelectionContainer').addClass('hidden');
-        }
-    });
+    // Make the GET request
+    const response = await fetch(urlWithParams);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    
+    // Process the data returned by the API
+    return data['analytics-data'];
+
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    throw error; 
+  }
+}
+
+async function getCompanyWeeklyCompletion(){
+  
+  try {
+    const analytics_data = await queryCompanyAPI("weekly-completion");
+    companyWeeklyCompletion = analytics_data;
+    renderCompanyWeeklyCompletion();
+    return companyWeeklyCompletion;
+  } catch (error) {
+    console.error('Error fetching analytics data:', error);
+  }
+
+}
+
+function renderCompanyWeeklyCompletion(){
+ // Create the chart
+  var weeklyCompletionChart = new Chart(
+    document.getElementById('taskCompletionChart').getContext('2d'),
+    companyWeeklyCompletion
+  );
+  console.log("created company's weekly task completion graph", companyWeeklyCompletion)
+}
+
+ 
+
+async function getTopEmployeesData(){
+  // get the info for top employees
+  try {
+    const analytics_data = await queryCompanyAPI("top-employees");
+    companyTopEmployees = analytics_data;
+    renderTopEmployees();
+    console.log("top employees data", companyTopEmployees)
+    return companyTopEmployees;
+  } catch (error) {
+    console.error('Error fetching analytics data:', error);
+  }
+}
+
+function renderTopEmployees(){
+   // Create the chart
+   var topEmployeesChart = new Chart(
+    document.getElementById('employeeTaskChart'),
+    companyTopEmployees
+  );
 }
 
 
 
 
+async function getPerformancePercent() {
+  try {
+    const analytics_data = await queryCompanyAPI("performance-percent");
+    performancePercent = analytics_data;
+    renderPerformancePercent(performancePercent);
+    return performancePercent;
+  } catch (error) {
+    console.error('Error fetching analytics data:', error);
+  }
+}
+
+function renderPerformancePercent(performancePercent){
+  const increased = "better than last week";
+  const decreased = "worse than last week";
+  var comparison;
+  if (performancePercent > 0){
+    comparison = increased;
+  } else {
+    comparison = decreased;
+  }
+
+  document.getElementById('performance-percentage').innerHTML = abs(performancePercent); 
+  document.getElementById('performance-comparison').innerHTML = comparison;
+}
+
+ // ------------------- END OF COMPANY VIEW -----------------
 
 
-// Sample data for task weight completion by week
-const data = {
-    labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"],
-    datasets: [{
-      label: "Task Weight Completed",
-      data: [20, 40, 60, 80, 100], // Sample completion percentages for each week
-      borderColor: "blue",
-      fill: false
-    }]
-  };
-
-  // Configuration for the chart
-  const config = {
-    type: 'line',
-    data: data,
-    options: {
-      responsive: true,
-      plugins: {
-        title: {
-          display: true,
-          text: 'Task Weight Completion by Week'
-        }
-      },
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: 'Weeks'
-          }
-        },
-        y: {
-          title: {
-            display: true,
-            text: 'Completion Percentage'
-          },
-          min: 0,
-          max: 100,
-          ticks: {
-            stepSize: 10
-          }
-        }
-      }
-    },
-  };
-
-  // Create the chart
-  var myChart = new Chart(
-    document.getElementById('taskCompletionChart'),
-    config
-  );
-
-// Sample data for top three employees task breakdown
-const company_data = {
-    labels: ["Employee 1", "Employee 2", "Employee 3"],
-    datasets: [{
-      label: "Complete",
-      data: [85, 70, 43], // Sample complete task weights
-      backgroundColor: "green",
-      barThickness: 30
-    }, {
-      label: "In Progress",
-      data: [10, 23, 12], // Sample in progress task weights
-      backgroundColor: "orange",
-      barThickness: 30
-    }, {
-      label: "Not Started",
-      data: [10, 20, 10], // Sample not started task weights
-      backgroundColor: "red",
-      barThickness: 30
-    }]
-  };
-
-  // Configuration for the chart
-  const configure = {
-    type: 'bar',
-    data: company_data,
-    options: {
-      responsive: true,
-      plugins: {
-        title: {
-          display: true,
-          text: 'Top Three Employees Task Breakdown'
-        }
-      },
-      scales: {
-        x: {
-          stacked: true,
-          title: {
-            display: true,
-            text: 'Employees'
-          }
-        },
-        y: {
-          stacked: true,
-          title: {
-            display: true,
-            text: 'Task Weight'
-          },
-          min: 0
-        }
-      }
-    }
-  };
-
-  // Create the chart
-  var myChart = new Chart(
-    document.getElementById('employeeTaskChart'),
-    configure
-  );
-
- 
+ // ------------------- COMPARE VIEW -----------------------
 
     // Sample data for past and current performance
     const pastPerformance = [50, 60, 65, 55, 70, 75, 80];
