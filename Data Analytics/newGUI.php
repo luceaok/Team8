@@ -99,7 +99,7 @@ $userId = $_SESSION["user"] -> id ?? null;
             </div>
             <div class="tab-pane fade" id="team-view">
                 <!-- Content for Team View tab -->
-                <!-- Dropdown for average team member projects -->
+                <!-- Dropdown for team member projects -->
                 <div class="row mt-3 hidden" id="projectsDropdownContainer">
                     <div class="col-md-6">
                         <label for="projects-dropdown">Select a Project:</label>
@@ -117,7 +117,26 @@ $userId = $_SESSION["user"] -> id ?? null;
                 </div>
             </div>
             <div class="tab-pane fade show active" id="compare-view">
-                <!-- Content for Compare View tab -->
+            <!-- Content for Compare View tab -->
+                <!-- Dropdown for average team member projects -->
+                <div class="row mt-3 hidden" id="projectsDropdownContainer">
+                    <div class="col-md-6">
+                        <label for="projects-dropdown">Select a Project:</label>
+                        <select id="projects-dropdown" class="form-control">
+                            <option value="project1">Project 1</option>
+                            <option value="project2">Project 2</option>
+                            <option value="project3">Project 3</option>
+                            <option value="project4">Project 4</option>
+                            <option value="project5">Project 5</option>
+                        </select>
+                        <div style="max-width: 800px; margin: 20px auto;">
+                            <canvas id="averageProjectChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade show active" id="compare-view">
+                <!-- Content for Compare View tab 
                 <div class="container compare-container">
                     <div class="row">
                         <div class="col-md-6">
@@ -131,7 +150,7 @@ $userId = $_SESSION["user"] -> id ?? null;
                             </div>
                         </div>
                         <div class="col-md-6 vertical-divider">
-                            <!-- Date selection for self comparison -->
+                            
                             <div class="container mt-5">
                                 <label>Compare With My Stats From:</label>
                                 <div class="row">
@@ -153,7 +172,7 @@ $userId = $_SESSION["user"] -> id ?? null;
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>-->
             <div class="tab-pane fade" id="company-view">
                 <!-- Content for Company View tab -->
                 <div class="notification">
