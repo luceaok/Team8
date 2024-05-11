@@ -292,7 +292,124 @@ function renderProjectStatusChart(){
 }
 // ---------- END OF PROJECTS VIEW -------
 
+// ---------- COMPARE VIEW -------
+var memberProjects;
+var projectOptions = "";
+var projectStatusData;
 
+async function queryProjectsAPI(data_about, q_data, target_id='', when = '' ) {
+  try {
+    // Define the URL of the API and parameters
+    
+    const apiUrl = 'http://34.147.182.3/v1.1/data-analytics/project-analytics';
+    const params = {
+      'access-code': 'FeoWemf-eqytfzk',
+      'data-about': data_about,
+      'data': q_data,
+      'target-id': target_id,
+      'when': when
+    };
+
+
+    // Construct the query string from parameters
+    const queryString = new URLSearchParams(params).toString();
+    const urlWithParams = `${apiUrl}?${queryString}`;
+    console.log(urlWithParams);
+
+    // Make the GET request
+    const response = await fetch(urlWithParams);
+    
+    // Check if the response is OK
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    
+    // Parse response data
+    const data = await response.json();
+    
+    // Process the data returned by the API
+    console.log("Received data:", data['analytics-data']);
+    return data['analytics-data'];
+
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    throw error; // Re-throw the error to propagate it to the caller
+  }
+}
+
+
+
+async function getProjects() {
+  try {
+    const analytics_data = await queryProjectsAPI("project", "member-projects", 1);
+    memberProjects = analytics_data;
+    renderProjectOptions();
+    const selectElement = document.getElementById('projects-dropdown');
+
+    // Add an event listener for the 'change' event
+    selectElement.addEventListener('change', function() {
+        // Get the selected option's value
+        const selectedValue = selectElement.value;
+        getProjectStatus(selectedValue);
+    });
+    // display a chart
+    getProjectStatus(memberProjects[0]["project-id"]);
+    return memberProjects;
+  } catch (error) {
+    console.error('Error fetching analytics data:', error);
+  }
+}
+
+function renderProjectOptions(){
+  memberProjects.forEach(addProjectOption);
+  document.getElementById('projects-dropdown').innerHTML = projectOptions;
+  console.log(projectOptions);
+
+}
+
+function addProjectOption(item){
+  proj_name = item['project-name'];
+  proj_id = item['project-id'];
+  var newOption = `<option value=${proj_id}>${proj_name}</option>`;
+  projectOptions += newOption;
+}
+
+
+async function getProjectStatus(project_id){
+  // get the info for that project and render the result
+  try {
+    const analytics_data = await queryProjectsAPI("project", "task-status-breakdown", project_id);
+    projectStatusData = analytics_data;
+    renderProjectStatusChart();
+    return projectStatusData;
+  } catch (error) {
+    console.error('Error fetching analytics data:', error);
+  }
+
+}
+
+function renderProjectStatusChart(){
+  // Check if an existing chart instance exists
+  if (window.projectStatusChart) {
+    // Destroy the existing chart
+    window.projectStatusChart.destroy();
+  } 
+  // Chart options
+  const chartOptions = {
+    scales: {
+      xAxes: [{ stacked: true }],
+      yAxes: [{ stacked: true }]
+    }
+  };
+  // Create the chart
+  const ctx = document.getElementById('averageProjectChart').getContext('2d');
+  window.projectStatusChart = new Chart(ctx, {
+    type: 'bar',
+    data: projectStatusData,
+    options: chartOptions
+  });
+
+}
 
 
 
