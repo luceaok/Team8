@@ -1,3 +1,10 @@
+<?php 
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+$userId = $_SESSION["user"] -> id ?? null;
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
