@@ -20,60 +20,33 @@
     padding: 0 15px; /* Add padding to align with other content */
 }
 
-.progress-title {
-    display: block; /* Change from 'none' to 'block' */
-    text-align: center; 
-    margin-bottom: 10px; 
-    font-weight: bold;
-}
-
-.progress-bar {
-    display: flex; /* Change from 'none' to 'flex' */
-    justify-content: center; /* Center the progress bar */
-    width: 80%;
-    margin: 0 auto; /* Center the progress bar horizontally */
-    border: 1px solid #ccc;
-    height: 20px;
-    background-color: #f0f0f0;
+ .progress-title{
+    text-align: center;
+  }
+  .progress-bar {
     position: relative;
-}
-
-.progress {
-    height: 100%;
-    width: var(--progress-width, 0%); /* Dynamic width based on data-progress attribute */
-}
-
-.progress-green, .progress-yellow, .progress-red {
+  }
+  
+  .completed {
     position: absolute;
-    height: 100%;
-    width: inherit; /* Take full width of the progress bar */
-}
-
-.progress-green {
-    background-color: green;
-}
-
-.progress-yellow {
-    background-color: yellow;
-}
-
-.progress-red {
-    background-color: red;
-}
-
-.label {
-    position: absolute;
-    top: 50%;
     left: 50%;
+    top: 50%;
     transform: translate(-50%, -50%);
     color: black;
-    display: none; /* Initially hidden */
-}
-
-.progress:hover .label {
-    display: block; /* Show label on hover */
-}
-
+    visibility: hidden;
+  }
+  
+  .progress-bar:hover .completed {
+    visibility: visible;
+  }
+  
+  .bg-ongoing {
+    background-color: yellow !important;
+  }
+  
+  .bg-completed {
+    background-color: green !important;
+  }
 
 .progress-key {
     padding-top: 20px;
