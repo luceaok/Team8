@@ -81,14 +81,14 @@ $userId = $_SESSION["user"] -> id ?? null;
                             <div class="col-md-6">
                                 <div class="number-box" id="projectsBox">
                                     <div>You have:</div>
-                                    <div id="projectsNumber">3</div>
+                                    <div id="projectsNumber"></div>
                                     <div>Projects</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="number-box" id="tasksBox">
                                     <div>You have:</div>
-                                    <div id="tasksNumber">7</div>
+                                    <div id="tasksNumber"></div>
                                     <div>Tasks</div>
                                 </div>
                             </div>
@@ -173,8 +173,8 @@ $userId = $_SESSION["user"] -> id ?? null;
 
     <!-- Bootstrap JS and jQuery -->
     <!-- Bootstrap JS and jQuery -->
-    <script>var userId = <?php echo json_encode($userId); ?>;</script>
-    
+    <!-- <script>var userId = <?php echo json_encode($userId); ?>;</script> -->
+    <script>var userId = 1 </script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
