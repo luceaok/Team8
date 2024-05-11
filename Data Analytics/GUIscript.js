@@ -1,3 +1,7 @@
+
+
+
+
 $(document).ready(function() {
     // Function to handle selection change in the things dropdown
     $('#things-dropdown').change(function() {
@@ -21,11 +25,11 @@ $(document).ready(function() {
 
     // Render charts
     renderCharts();
-    getPieData();
-    getNumProjects();
-    getNumTasks();
-    getLinePerformanceData();
-    getProjects();
+    getPieData(userId);
+    getNumProjects(userId);
+    getNumTasks(userId);
+    getLinePerformanceData(userId);
+    getProjects(userId);
     getCompanyWeeklyCompletion();
     getTopEmployeesData();
     getPerformancePercent();
@@ -53,6 +57,7 @@ function renderCharts() {
 
 // ------------- EMPLOYEE VIEW --------------------
 
+alert("current user", currentUser);
 var pieChartData;
 var numProjects;
 var numTasks;
@@ -100,9 +105,9 @@ async function queryIndividualAPI(data_about, q_data, target_id='', when = '' ) 
 
 
 
-async function getPieData() {
+async function getPieData(targetId) {
   try {
-    const analytics_data = await queryIndividualAPI("self", "task-weight-breakdown", 1);
+    const analytics_data = await queryIndividualAPI("self", "task-weight-breakdown", targetId);
     pieChartData = analytics_data;
     renderPieChart();
     return pieChartData;
@@ -117,9 +122,9 @@ function renderPieChart(){
   var pieChart = new Chart(pieCtx, pieChartData);
 }
 
-async function getNumProjects() {
+async function getNumProjects(targetId) {
   try {
-    const analytics_data = await queryIndividualAPI("self", "num-projects", 1);
+    const analytics_data = await queryIndividualAPI("self", "num-projects", targetId);
     numProjects = analytics_data;
     renderNumProjects();
     return numProjects;
@@ -132,9 +137,9 @@ function renderNumProjects(){
   document.getElementById('projectsNumber').innerHTML = numProjects;
 }
 
-async function getNumTasks() {
+async function getNumTasks(targetId) {
   try {
-    const analytics_data = await queryIndividualAPI("self", "num-tasks", 1);
+    const analytics_data = await queryIndividualAPI("self", "num-tasks", targetId);
     numTasks = analytics_data;
     renderNumTasks();
     return numTasks;
@@ -147,9 +152,9 @@ function renderNumTasks(){
   document.getElementById('tasksNumber').innerHTML = numTasks;
 }
 
-async function getLinePerformanceData() {
+async function getLinePerformanceData(targetId) {
   try {
-    const analytics_data = await queryIndividualAPI("self", "weekly-task-completion", 1);
+    const analytics_data = await queryIndividualAPI("self", "weekly-task-completion", targetId);
     linePerformanceData = analytics_data;
     renderLineChart();
     return linePerformanceData;
@@ -464,4 +469,3 @@ function renderPerformancePercent(performancePercent){
       window.performanceChart = new Chart(ctx_performance, config_performance);
     };
 
-    
