@@ -40,12 +40,22 @@ $userId = $_SESSION["user"] -> id ?? null;
             <div class="tab-pane fade show active" id="employee-view">
                 <!-- Content for Employee View tab -->
                
-               <div class="progress-bar">
-                    <div class="progress progress-green" data-progress="70"></div>
-                    <div class="progress progress-yellow" data-progress="20"></div>
-                    <div class="progress progress-red" data-progress="10"></div>
-                </div>
-
+           <hr class="divider">
+                <div class="progress-title">Current Task Progress:</div><br>
+                <div class="progress-container">
+                    <div class="progress" id="progress-bar">
+                      <div class="progress-bar bg-completed" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+                        <span class="completed">60%</span>
+                      </div>
+                      <div class="progress-bar bg-ongoing" role="progressbar" style="width: 30%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">
+                        <span class="completed">30%</span>
+                      </div>
+                      <div class="progress-bar bg-danger" role="progressbar" style="width: 10%;" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+                        <span class="completed">10%</span>
+                      </div>
+                    </div>
+                  </div>
+        
                 <div class="progress-key">
                     <div class="key-item">
                         <div class="key-color key-green"></div>
@@ -59,7 +69,8 @@ $userId = $_SESSION["user"] -> id ?? null;
                         <div class="key-color key-red"></div>
                         <span>Overdue</span>
                     </div>
-                    
+                    <hr class="divider"><br><br>  
+                
                 </div>
         
                 <!-- Charts -->
