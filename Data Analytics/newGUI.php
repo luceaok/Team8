@@ -117,26 +117,23 @@ $userId = $_SESSION["user"] -> id ?? null;
                 </div>
             </div>
             <div class="tab-pane fade show active" id="compare-view">
+
             <!-- Content for Compare View tab -->
                 <!-- Dropdown for average team member projects -->
                 <div class="row mt-3 hidden" id="projectsDropdownContainer">
                     <div class="col-md-6">
-                        <label for="projects-dropdown">Select a Project:</label>
-                        <select id="projects-dropdown" class="form-control">
-                            <option value="project1">Project 1</option>
-                            <option value="project2">Project 2</option>
-                            <option value="project3">Project 3</option>
-                            <option value="project4">Project 4</option>
-                            <option value="project5">Project 5</option>
+                        <label for="compare-projects-dropdown">Select a Project:</label>
+                        <select id="compare-projects-dropdown" class="form-control">
+                            
                         </select>
                         <div style="max-width: 800px; margin: 20px auto;">
                             <canvas id="averageProjectChart"></canvas>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div><!-- Content for Compare View tab 
             <div class="tab-pane fade show active" id="compare-view">
-                <!-- Content for Compare View tab 
+                
                 <div class="container compare-container">
                     <div class="row">
                         <div class="col-md-6">
@@ -192,7 +189,7 @@ $userId = $_SESSION["user"] -> id ?? null;
 
     <!-- Bootstrap JS and jQuery -->
     <!-- Bootstrap JS and jQuery -->
-    <!-- <script>var userId = <?php echo json_encode($userId); ?>;</script> -->
+    <!-- <script>var userId = <?php// echo json_encode($userId); ?>;</script> -->
     <script>var userId = 1 </script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

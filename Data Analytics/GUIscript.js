@@ -4,6 +4,7 @@
 
 $(document).ready(function() {
     // Function to handle selection change in the things dropdown
+    /*
     $('#things-dropdown').change(function() {
         var selectedThing = $(this).val();
         console.log("Comparison Category:", selectedThing);
@@ -22,7 +23,7 @@ $(document).ready(function() {
             $('#dateSelectionContainer').removeClass('hidden');
         }
     });
-
+*/
     // Render charts
     renderCharts();
     getPieData(userId);
@@ -30,6 +31,7 @@ $(document).ready(function() {
     getNumTasks(userId);
     getLinePerformanceData(userId);
     getProjects(userId);
+    getComparison(userId);
     getCompanyWeeklyCompletion();
     getTopEmployeesData();
     getPerformancePercent();
@@ -173,11 +175,11 @@ function renderLineChart(){
 
 // ------------ PROJECTS VIEW -----------------------------------
 
-var memberProjects;
+var leadingProjects;
 var projectOptions = "";
 var projectStatusData;
 
-async function queryProjectsAPI(data_about, q_data, target_id='', when = '' ) {
+async function queryProjectsAPI(data_about, q_data, target_id='', when = '', my_id = '' ) {
   try {
     // Define the URL of the API and parameters
     
@@ -187,7 +189,8 @@ async function queryProjectsAPI(data_about, q_data, target_id='', when = '' ) {
       'data-about': data_about,
       'data': q_data,
       'target-id': target_id,
-      'when': when
+      'when': when,
+      'my-id': my_id
     };
 
 
@@ -219,10 +222,10 @@ async function queryProjectsAPI(data_about, q_data, target_id='', when = '' ) {
 
 
 
-async function getProjects() {
+async function getProjects(userId) {
   try {
-    const analytics_data = await queryProjectsAPI("project", "member-projects", 1);
-    memberProjects = analytics_data;
+    const analytics_data = await queryProjectsAPI("project", "member-projects", userId);
+    leadingProjects = analytics_data;
     renderProjectOptions();
     const selectElement = document.getElementById('projects-dropdown');
 
@@ -233,15 +236,15 @@ async function getProjects() {
         getProjectStatus(selectedValue);
     });
     // display a chart
-    getProjectStatus(memberProjects[0]["project-id"]);
-    return memberProjects;
+    getProjectStatus(leadingProjects[0]["project-id"]);
+    return leadingProjects;
   } catch (error) {
     console.error('Error fetching analytics data:', error);
   }
 }
 
 function renderProjectOptions(){
-  memberProjects.forEach(addProjectOption);
+  leadingProjects.forEach(addProjectOption);
   document.getElementById('projects-dropdown').innerHTML = projectOptions;
   console.log(projectOptions);
 
@@ -294,105 +297,81 @@ function renderProjectStatusChart(){
 
 // ---------- COMPARE VIEW -------
 var memberProjects;
-var projectOptions = "";
-var projectStatusData;
+var projectCompareOptions = "";
+var projectPerformance;
 
-async function queryProjectsAPI(data_about, q_data, target_id='', when = '' ) {
+
+
+
+async function getComparison(userId) {
   try {
-    // Define the URL of the API and parameters
-    
-    const apiUrl = 'http://34.147.182.3/v1.1/data-analytics/project-analytics';
-    const params = {
-      'access-code': 'FeoWemf-eqytfzk',
-      'data-about': data_about,
-      'data': q_data,
-      'target-id': target_id,
-      'when': when
-    };
-
-
-    // Construct the query string from parameters
-    const queryString = new URLSearchParams(params).toString();
-    const urlWithParams = `${apiUrl}?${queryString}`;
-    console.log(urlWithParams);
-
-    // Make the GET request
-    const response = await fetch(urlWithParams);
-    
-    // Check if the response is OK
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    
-    // Parse response data
-    const data = await response.json();
-    
-    // Process the data returned by the API
-    console.log("Received data:", data['analytics-data']);
-    return data['analytics-data'];
-
-  } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
-    throw error; // Re-throw the error to propagate it to the caller
-  }
-}
-
-
-
-async function getProjects() {
-  try {
-    const analytics_data = await queryProjectsAPI("project", "member-projects", 1);
+    const analytics_data = await queryIndividualAPI("self", "member-projects", userId);
+    console.log("data for comparison graph: ", analytics_data);
     memberProjects = analytics_data;
-    renderProjectOptions();
-    const selectElement = document.getElementById('projects-dropdown');
+    renderMyProjectOptions();
+    const selectElement = document.getElementById('compare-projects-dropdown');
 
-    // Add an event listener for the 'change' event
-    selectElement.addEventListener('change', function() {
-        // Get the selected option's value
-        const selectedValue = selectElement.value;
-        getProjectStatus(selectedValue);
-    });
-    // display a chart
-    getProjectStatus(memberProjects[0]["project-id"]);
-    return memberProjects;
+        
+        // Add an event listener for the 'change' event
+        selectElement.addEventListener('change', function() {
+            // Get the selected option's value
+            const selectedValue = selectElement.value;
+            renderPerformanceComparisonChart(analytics_data[0]["id"]);
+            
+        });
+        // display a chart
+        try{
+         memberProjects = await getPerformanceComparison(userId);
+         renderPerformanceComparisonChart(analytics_data[0]["id"]);
+        } catch (error){
+          console.error('Error fetching analytics data:', error);
+        }
+       
+        
+        
+        return memberProjects;
+  
   } catch (error) {
     console.error('Error fetching analytics data:', error);
   }
 }
 
-function renderProjectOptions(){
-  memberProjects.forEach(addProjectOption);
-  document.getElementById('projects-dropdown').innerHTML = projectOptions;
-  console.log(projectOptions);
+function renderMyProjectOptions(){
+  console.log("Here are the available memberProjects", memberProjects);
+  memberProjects.forEach(addCompareProjectOption);
+  document.getElementById('compare-projects-dropdown').innerHTML = projectCompareOptions;
+  console.log(projectCompareOptions);
+  
 
 }
 
-function addProjectOption(item){
-  proj_name = item['project-name'];
-  proj_id = item['project-id'];
+function addCompareProjectOption(item){
+  proj_name = item['name'];
+  proj_id = item['id'];
   var newOption = `<option value=${proj_id}>${proj_name}</option>`;
-  projectOptions += newOption;
+  projectCompareOptions += newOption;
 }
 
-
-async function getProjectStatus(project_id){
+async function getPerformanceComparison(userId){
   // get the info for that project and render the result
   try {
-    const analytics_data = await queryProjectsAPI("project", "task-status-breakdown", project_id);
-    projectStatusData = analytics_data;
-    renderProjectStatusChart();
-    return projectStatusData;
+    const analytics_data = await queryProjectsAPI("project", "performance-metric", userId);
+    projectPerformance = analytics_data;
+    console.log("api for performance-metric returned", projectPerformance);
+    return projectPerformance;
   } catch (error) {
     console.error('Error fetching analytics data:', error);
   }
-
 }
 
-function renderProjectStatusChart(){
+function renderPerformanceComparisonChart(proj_id){
+  console.log("the projectPerformance", projectPerformance);
+  console.log("the proj_id", proj_id);
+  console.log("projectPerformance[proj_id]", projectPerformance[proj_id]);
   // Check if an existing chart instance exists
-  if (window.projectStatusChart) {
+  if (window.projectComparisonChart) {
     // Destroy the existing chart
-    window.projectStatusChart.destroy();
+    window.projectComparisonChart.destroy();
   } 
   // Chart options
   const chartOptions = {
@@ -403,13 +382,14 @@ function renderProjectStatusChart(){
   };
   // Create the chart
   const ctx = document.getElementById('averageProjectChart').getContext('2d');
-  window.projectStatusChart = new Chart(ctx, {
+  window.projectComparisonChart = new Chart(ctx, {
     type: 'bar',
-    data: projectStatusData,
+    data: projectPerformance[proj_id],
     options: chartOptions
   });
-
 }
+
+
 
 
 
@@ -532,6 +512,7 @@ function renderPerformancePercent(performancePercent){
  // ------------------- COMPARE VIEW -----------------------
 
     // Sample data for past and current performance
+    /*
     const pastPerformance = [50, 60, 65, 55, 70, 75, 80];
     const currentPerformance = [55, 65, 70, 60, 75, 80, 85];
     const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
@@ -579,10 +560,10 @@ function renderPerformancePercent(performancePercent){
         }
       }
     };
-
+*/
     // Create the chart
-    window.onload = function() {
-      const ctx_performance = document.getElementById('performanceChart').getContext('2d');
-      window.performanceChart = new Chart(ctx_performance, config_performance);
-    };
+    //window.onload = function() {
+      //const ctx_performance = document.getElementById('averageProjectChart').getContext('2d');
+      //window.performanceChart = new Chart(ctx_performance, config_performance);
+    //};
 
