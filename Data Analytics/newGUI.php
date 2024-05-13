@@ -97,25 +97,32 @@ $userId = $_SESSION["user"] -> id ?? null;
                     <canvas id="line-chart" width="400" height="400"></canvas>
                 </div>
             </div>
-            <div class="tab-pane fade" id="team-view">
-                <!-- Content for Team View tab -->
-                <!-- Dropdown for team member projects -->
-                <div class="row mt-3 hidden" id="projectsDropdownContainer">
-                    <div class="col-md-6">
-                        <label for="projects-dropdown">Select a Project:</label>
-                        <select id="projects-dropdown" class="form-control">
-                            <option value="project1">Project 1</option>
-                            <option value="project2">Project 2</option>
-                            <option value="project3">Project 3</option>
-                            <option value="project4">Project 4</option>
-                            <option value="project5">Project 5</option>
-                        </select>
-                        <div style="max-width: 800px; margin: 20px auto;">
-                            <canvas id="projectChart"></canvas>
-                        </div>
+            <?php
+if ($userId >= 1 && $userId <= 3) {
+    echo <<<HTML
+        <div class="tab-pane fade" id="team-view">
+            <!-- Content for Team View tab -->
+            <!-- Dropdown for team member projects -->
+            <div class="row mt-3 hidden" id="projectsDropdownContainer">
+                <div class="col-md-6">
+                    <label for="projects-dropdown">Select a Project:</label>
+                    <select id="projects-dropdown" class="form-control">
+                        <option value="project1">Project 1</option>
+                        <option value="project2">Project 2</option>
+                        <option value="project3">Project 3</option>
+                        <option value="project4">Project 4</option>
+                        <option value="project5">Project 5</option>
+                    </select>
+                    <div style="max-width: 800px; margin: 20px auto;">
+                        <canvas id="projectChart"></canvas>
                     </div>
                 </div>
             </div>
+        </div>
+HTML;
+}
+?>
+
             <div class="tab-pane fade show active" id="compare-view">
 
             <!-- Content for Compare View tab -->
