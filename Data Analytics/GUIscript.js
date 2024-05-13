@@ -59,7 +59,7 @@ function renderCharts() {
 
 // ------------- EMPLOYEE VIEW --------------------
 
-alert("current user", userId);
+//alert("current user", userId);
 var pieChartData;
 var numProjects;
 var numTasks;
