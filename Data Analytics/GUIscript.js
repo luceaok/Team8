@@ -30,6 +30,7 @@ $(document).ready(function() {
     getNumProjects(userId);
     getNumTasks(userId);
     getLinePerformanceData(userId);
+    getTaskStatuses(userId);
     getProjects(userId);
     getComparison(userId);
     getCompanyWeeklyCompletion();
@@ -169,6 +170,35 @@ function renderLineChart(){
       // Line Chart
       var lineCtx = document.getElementById('line-chart').getContext('2d');
       var lineChart = new Chart(lineCtx, linePerformanceData);
+}
+
+async function getTaskStatuses(userId){
+  try {
+    const analytics_data = await queryIndividualAPI("self", "task-status-proportions", userId);
+    taskStatus = analytics_data;
+    let complete = taskStatus["Complete"];
+    let in_progress = taskStatus["In Progress"];
+    let overdue = taskStatus["Overdue"];
+    let total_weight = complete + in_progress + overdue;
+    complete = complete ? Number(((complete / total_weight ) * 100).toFixed(1)) : 0;
+    in_progress = in_progress? Number(((in_progress / total_weight ) * 100).toFixed(1)) : 0;
+    overdue = overdue ? Number(((overdue / total_weight ) * 100).toFixed(1)) : 0;
+    let bars = `<div class="progress-bar bg-completed" role="progressbar" style="width: ${complete}%;" aria-valuenow="${complete}" aria-valuemin="0" aria-valuemax="100">
+                  <span class="completed">${complete}%</span>
+                </div>
+                <div class="progress-bar bg-ongoing" role="progressbar" style="width: ${in_progress}%;" aria-valuenow="${in_progress}" aria-valuemin="0" aria-valuemax="100">
+                  <span class="completed">${in_progress}%</span>
+                </div>
+                <div class="progress-bar bg-danger" role="progressbar" style="width: ${overdue}%;" aria-valuenow="${overdue}" aria-valuemin="0" aria-valuemax="100">
+                  <span class="completed">${overdue}%</span>
+                </div>`;
+   document.getElementById("progress-bar").innerHTML = bars;
+ 
+  } catch (error) {
+    console.error('Error fetching analytics data:', error);
+  }
+
+
 }
  
 // ------------ END OF EMPLOYEE VIEW ----------------------------
@@ -316,7 +346,7 @@ async function getComparison(userId) {
         selectElement.addEventListener('change', function() {
             // Get the selected option's value
             const selectedValue = selectElement.value;
-            renderPerformanceComparisonChart(analytics_data[0]["id"]);
+            renderPerformanceComparisonChart(selectedValue);
             
         });
         // display a chart
