@@ -2,7 +2,9 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-$userId = $_SESSION["user"] -> id ?? null;
+ $userId = $_SESSION["user"] -> id ?? null;
+ 
+
 ?>
 
 <!DOCTYPE html>
@@ -23,122 +25,141 @@ $userId = $_SESSION["user"] -> id ?? null;
     <div class="container-fluid">
         <h1 class="text-center mt-4">Data Analytics</h1>
         <ul class="nav nav-tabs navbar-fixed-top justify-content-center mt-4">
-            <li class="nav-item">
-                <a class="nav-link active" id="employee-tab" data-toggle="tab" href="#employee-view">Employee View</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="team-tab" data-toggle="tab" href="#team-view">Team View</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="compare-tab" data-toggle="tab" href="#compare-view">Compare View</a>
-            </li>
+            <?php
+if ($userId != 2 && $userId != 15) {
+    echo '<li class="nav-item">';
+    echo '<a class="nav-link active" id="employee-tab" data-toggle="tab" href="#employee-view">Employee View</a>';
+    echo '</li>';
+}
+?>
+            <?php
+if ($userId >= 1 && $userId <= 3 || $userId == 15) {
+    echo '<li class="nav-item">';
+    echo '<a class="nav-link" id="team-tab" data-toggle="tab" href="#team-view">Team View</a>';
+    echo '</li>';
+}
+?>
+<?php
+if ($userId != 15) {
+    echo '<li class="nav-item">';
+    echo '<a class="nav-link" id="compare-tab" data-toggle="tab" href="#compare-view">Compare View</a>';
+    echo '</li>';
+}
+?>
             <li class="nav-item">
                 <a class="nav-link" id="company-tab" data-toggle="tab" href="#company-view">Company View</a>
             </li>
         </ul>
         <div class="tab-content mt-2">
-            <div class="tab-pane fade show active" id="employee-view">
-                <!-- Content for Employee View tab -->
-               
-           <hr class="divider">
-                <div class="progress-title">Current Task Progress:</div><br>
-                <div class="progress-container">
-                    <div class="progress" id="progress-bar">
-                      <div class="progress-bar bg-completed" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
-                        <span class="completed">60%</span>
-                      </div>
-                      <div class="progress-bar bg-ongoing" role="progressbar" style="width: 30%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">
-                        <span class="completed">30%</span>
-                      </div>
-                      <div class="progress-bar bg-danger" role="progressbar" style="width: 10%;" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
-                        <span class="completed">10%</span>
-                      </div>
-                    </div>
-                  </div>
-        
-                <div class="progress-key">
-                    <div class="key-item">
-                        <div class="key-color key-green"></div>
-                        <span>Complete</span>
-                    </div>
-                    <div class="key-item">
-                        <div class="key-color key-yellow"></div>
-                        <span>Ongoing</span>
-                    </div>
-                    <div class="key-item">
-                        <div class="key-color key-red"></div>
-                        <span>Overdue</span>
-                    </div>
-                    <hr class="divider"><br><br>  
-                
-                </div>
-        
-                <!-- Charts -->
-                <div class="chart-container">
-                    <canvas id="pie-chart" width="400" height="400"></canvas>
-                    <div class="number-container">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="number-box" id="projectsBox">
-                                    <div>You have:</div>
-                                    <div id="projectsNumber"></div>
-                                    <div>Projects</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="number-box" id="tasksBox">
-                                    <div>You have:</div>
-                                    <div id="tasksNumber"></div>
-                                    <div>Tasks</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <canvas id="line-chart" width="400" height="400"></canvas>
-                </div>
-            </div>
+        <?php
+if ($userId != 2 && $userId != 15) {
+
+echo '<div class="tab-pane fade show active" id="employee-view">';        
+echo '<!-- Content for Employee View tab -->';
+echo '<hr class="divider">';
+echo '<div class="progress-title">Current Task Progress:</div><br>';
+echo '<div class="progress-container">';
+echo '<div class="progress" id="progress-bar">';
+echo '<div class="progress-bar bg-completed" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">';
+echo '<span class="completed">60%</span>';
+echo '</div>';
+echo '<div class="progress-bar bg-ongoing" role="progressbar" style="width: 30%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">';
+echo '<span class="completed">30%</span>';
+echo '</div>';
+echo '<div class="progress-bar bg-danger" role="progressbar" style="width: 10%;" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">';
+echo '<span class="completed">10%</span>';
+echo '</div>';
+echo '</div>';
+echo '</div>';
+
+echo '<div class="progress-key">';
+echo '<div class="key-item">';
+echo '<div class="key-color key-green"></div>';
+echo '<span>Complete</span>';
+echo '</div>';
+echo '<div class="key-item">';
+echo '<div class="key-color key-yellow"></div>';
+echo '<span>Ongoing</span>';
+echo '</div>';
+echo '<div class="key-item">';
+echo '<div class="key-color key-red"></div>';
+echo '<span>Overdue</span>';
+echo '</div>';
+echo '<hr class="divider"><br><br>';  
+
+echo '</div>';
+
+echo '<!-- Charts -->';
+echo '<div class="chart-container">';
+echo '<canvas id="pie-chart" width="400" height="400"></canvas>';
+echo '<div class="number-container">';
+echo '<div class="row">';
+echo '<div class="col-md-6">';
+echo '<div class="number-box" id="projectsBox">';
+echo '<div>You have:</div>';
+echo '<div id="projectsNumber"></div>';
+echo '<div>Projects</div>';
+echo '</div>';
+echo '</div>';
+echo '<div class="col-md-6">';
+echo '<div class="number-box" id="tasksBox">';
+echo '<div>You have:</div>';
+echo '<div id="tasksNumber"></div>';
+echo '<div>Tasks</div>';
+echo '</div>';
+echo '</div>';
+echo '</div>';
+echo '</div>';
+echo '<canvas id="line-chart" width="400" height="400"></canvas>';
+echo '</div>';
+echo '</div>';
+}
+?>
             <?php
-if ($userId >= 1 && $userId <= 3) {
-    echo <<<HTML
-        <div class="tab-pane fade" id="team-view">
-            <!-- Content for Team View tab -->
-            <!-- Dropdown for team member projects -->
-            <div class="row mt-3 hidden" id="projectsDropdownContainer">
-                <div class="col-md-6">
-                    <label for="projects-dropdown">Select a Project:</label>
-                    <select id="projects-dropdown" class="form-control">
-                        <option value="project1">Project 1</option>
-                        <option value="project2">Project 2</option>
-                        <option value="project3">Project 3</option>
-                        <option value="project4">Project 4</option>
-                        <option value="project5">Project 5</option>
-                    </select>
-                    <div style="max-width: 800px; margin: 20px auto;">
-                        <canvas id="projectChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-HTML;
+if ($userId >= 1 && $userId <= 3 || $userId <= 15) {
+    echo '<div class="tab-pane fade" id="team-view">';
+    echo '<!-- Content for Team View tab -->';
+    echo '<!-- Dropdown for team member projects -->';
+    echo '<div class="row mt-3 hidden" id="projectsDropdownContainer">';
+    echo '<div class="col-md-6">';
+    echo '<label for="projects-dropdown">Select a Project:</label>';
+    echo '<select id="projects-dropdown" class="form-control">';
+    echo '<option value="project1">Project 1</option>';
+    echo '<option value="project2">Project 2</option>';
+    echo '<option value="project3">Project 3</option>';
+    echo '<option value="project4">Project 4</option>';
+    echo '<option value="project5">Project 5</option>';
+    echo '</select>';
+    echo '<div style="max-width: 800px; margin: 20px auto;">';
+    echo '<canvas id="projectChart"></canvas>';
+    echo '</div>';
+    echo '</div>';
+    echo '</div>';
+    echo '</div>';
 }
 ?>
 
-            <div class="tab-pane fade show active" id="compare-view">
-
-            <!-- Content for Compare View tab -->
-                <!-- Dropdown for average team member projects -->
-                <div class="row mt-3 hidden" id="projectsDropdownContainer">
-                    <div class="col-md-6">
-                        <label for="compare-projects-dropdown">Select a Project:</label>
-                        <select id="compare-projects-dropdown" class="form-control">
-                            
-                        </select>
-                        <div style="max-width: 800px; margin: 20px auto;">
-                            <canvas id="averageProjectChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- Content for Compare View tab 
+<?php
+if ($userId != 15) {
+echo '<div class="tab-pane fade show active" id="compare-view">';
+echo '<!-- Content for Compare View tab -->';
+echo '<!-- Dropdown for average team member projects -->';
+echo '<div class="row mt-3 hidden" id="projectsDropdownContainer">';
+echo '<div class="col-md-6">';
+echo '<label for="compare-projects-dropdown">Select a Project:</label>';
+echo '<select id="compare-projects-dropdown" class="form-control">';
+echo '</select>';
+echo '<div style="max-width: 800px; margin: 20px auto;">';
+echo '<canvas id="averageProjectChart"></canvas>';
+echo '</div>';
+echo '</div>';
+echo '</div>';
+echo '</div>';
+}
+?>
+            
+            
+            <!-- Content for Compare View tab 
             <div class="tab-pane fade show active" id="compare-view">
                 
                 <div class="container compare-container">
@@ -196,8 +217,8 @@ HTML;
 
     <!-- Bootstrap JS and jQuery -->
     <!-- Bootstrap JS and jQuery -->
-    <script>var userId = <?php echo json_encode($userId); ?>;</script> 
-    <script>var userId = 1 </script>
+    <script>var userId = <?php echo $userId; ?>;</script> 
+    <!-- <script>var userId = 4 </script> -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -211,3 +232,5 @@ HTML;
     
 </body>
 </html>
+
+
